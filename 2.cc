@@ -20,7 +20,7 @@ float sum_desc_separately()
 {
     float sum_pos{0.}, sum_neg{0.};
     for (int n = iter - 1; n > 0; n-=2) sum_neg += -1.f / n;
-    for (int n = iter; n > 0; n-=2) sum_pos += 1.f / n;
+    for (int n = iter    ; n > 0; n-=2) sum_pos += 1.f / n;
     return sum_pos + sum_neg;
 }
 
