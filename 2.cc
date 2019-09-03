@@ -1,44 +1,67 @@
 #include <iostream>
+#include <functional>
+#include <math.h>
 
-static const int iter = 10000;
+/** equation of the form f(e)=0, where e is energy in main state
+    for the problem where the particle is in a rectangular
+    potential well of size [-a, a] and potential -|U0|. */
 
-float sum_desc()
+static const float err = 0.0001f;
+static const float a = 1.f;
+static const float U0 = 1.f;
+
+static const auto f(float E) {
+    const float xi = -E / U0;
+    return 1.f / std::tan(std::sqrt(2 * a * a * U0 * (1 - xi))) - std::sqrt(1.f / xi - 1);
+};
+
+static const auto df(float E) {
+    const float xi = -E / U0;
+    return a * a * U0 * std::pow(std::sin(std::sqrt(2 * a * a * U0 * (1 - xi))), 2) /
+           std::sqrt(2 * a * a * U0 * (1 - xi)) + 1.f / (xi * xi * 2 * std::sqrt(1.f / xi - 1));
+};
+
+static float Dichotomy(const float err, const float a, const float b)
 {
-    float sum{0.};
-    for (int n = iter; n > 0; sum += (n % 2 ? -1.f : 1.f) / n--);
-    return sum;
+    float middle = (a + b) / 2;
+    float value = f(middle);
+    if (b - a < err)
+        return middle;
+    if (value * f(a) <= 0) {
+        return Dichotomy(err, a, middle);
+    } else {
+        return Dichotomy(err, middle, b);
+    }
 }
 
-float sum_asc()
-{ 
-    float sum{0.};
-    for (int n = 1; n <= iter; sum += (n % 2 ? -1.f : 1.f) / n++);
-    return sum;
+static float FixedPointIteration(const float err, const float x)
+{
+    /// lambda -> 1/f'(x), but df/dx for this task is too hard, so I just guess lambda.
+    const float lambda = 0.5f; 
+    float value = -lambda * f(x);
+    if (std::abs(value) < err) {
+        return x;
+    } else {
+        return FixedPointIteration(err, x - value);
+    }
 }
 
-float sum_desc_separately()
+static float NewtonMethod(const float err, const float x)
 {
-    float sum_pos{0.}, sum_neg{0.};
-    for (int n = iter - 1; n > 0; n-=2) sum_neg += -1.f / n;
-    for (int n = iter    ; n > 0; n-=2) sum_pos += 1.f / n;
-    return sum_pos + sum_neg;
-}
-
-float sum_asc_separately()
-{
-    float sum_pos{0.}, sum_neg{0.};
-    for (int n = 1; n <= iter; n+=2) sum_neg += -1.f / n;
-    for (int n = 2; n <= iter; n+=2) sum_pos += 1.f / n;
-    return sum_pos + sum_neg;
+    float value = f(x) / df(x);
+    if (std::abs(value) < err) {
+        return x;
+    } else {
+        return FixedPointIteration(err, x - value);
+    }
+    return df(x);
 }
 
 int main()
 {
-    // Alternating Harmonic Series: ln2 = 0.69314718056 
-    // In this task row is inverted => right answer -ln2
-    std::cout << "1. descending:\t" << sum_desc() << std::endl;
-    std::cout << "2. ascending:\t" << sum_asc() << std::endl;
-    std::cout << "3. descending separately: " << sum_desc_separately() << std::endl;
-    std::cout << "4. ascending separately:  " << sum_asc_separately() << std::endl;
+    const float E0 = -0.5f;
+    std::cout << "Dichotomy method: " << Dichotomy(err, -1.f, -0.f) << std::endl;
+    std::cout << "Fixed Point Iteration method: " << FixedPointIteration(err, E0) << std::endl;
+    std::cout << "Newton's method: " << NewtonMethod(err, E0) << std::endl;
     return 0;
 }

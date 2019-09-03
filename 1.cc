@@ -28,11 +28,10 @@ void foo()
                       << std::boolalpha << (forcompare[i].first == forcompare[j].first) 
                       << std::endl;
 
-    T temp = 1.;
-    for (temp = 1., iter = 0; temp < std::numeric_limits<T>::max(); temp*=2, ++iter);
+    for (T temp = 1., iter = 0; temp < std::numeric_limits<T>::max(); temp*=2, ++iter);
     std::cout << "Max exponent :" << std::right << std::setw(5) << (iter - 1) 
               << "\nMax value: " << std::numeric_limits<T>::max() << std::endl; 
-    for (temp = 1., iter = 0; temp >= std::numeric_limits<T>::min(); temp/=2, --iter);
+    for (T temp = 1., iter = 0; temp >= std::numeric_limits<T>::min(); temp/=2, --iter);
     std::cout << "Min exponent :" << std::right << std::setw(5) << (iter + 1) 
               << ":\nMin value: " << std::numeric_limits<T>::min() << std::endl; 
 }
