@@ -4,6 +4,14 @@
 
 static const int N = 4;
 
+const auto x(int k) {
+    return (1 + static_cast<double>(k) / N);
+}
+
+const auto y(int k) {
+    return std::log(x(k));
+}
+
 static const auto X = [](int k) {
     return (M_PI * k) / (4. * N);
 };
