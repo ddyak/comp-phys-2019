@@ -7,8 +7,12 @@
 #include <typeinfo>
 
 template <typename T>
-void foo() 
+void foo()
 {
+    auto x0  = std::numeric_limits<T>::min();
+    auto x1 = x0/2;
+    auto x2 = x1*2;
+    std::cout << x2 - x1 << std::endl;
     std::cout << "================================" << std::endl
               << "========== Type: " << typeid(T).name() << " =============" << std::endl
               << "================================" << std::endl;
@@ -27,11 +31,12 @@ void foo()
                       << std::left  << std::setw(7) << forcompare[j].second << " : "
                       << std::boolalpha << (forcompare[i].first == forcompare[j].first) 
                       << std::endl;
-
-    for (T temp = 1., iter = 0; temp < std::numeric_limits<T>::max(); temp*=2, ++iter);
+    iter = 0;
+    for (T temp = 1.; temp < std::numeric_limits<T>::max(); temp*=2, ++iter);
     std::cout << "Max exponent :" << std::right << std::setw(5) << (iter - 1) 
               << "\nMax value: " << std::numeric_limits<T>::max() << std::endl; 
-    for (T temp = 1., iter = 0; temp >= std::numeric_limits<T>::min(); temp/=2, --iter);
+    iter = 0;
+    for (T temp = 1.; temp >= std::numeric_limits<T>::min(); temp/=2, --iter);
     std::cout << "Min exponent :" << std::right << std::setw(5) << (iter + 1) 
               << ":\nMin value: " << std::numeric_limits<T>::min() << std::endl; 
 }
