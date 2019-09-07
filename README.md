@@ -1,26 +1,23 @@
-# Basics of computational physics. Autumn 2019, NSU, Physics Department.
-
-The code is placed "as is".
-
-Daniil Yakovlev.
-
+# Basics of computational physics. NSU, Physics Department, Autumn 2019.
 
 ## Requirements:
 
-* **g++ compiler** v9.1 (Or any other for supporting C++17).
+* **Linux**
+* **g++ compiler** v9.1 (or any other for supporting C++17).
 * **gnuplot** v5.2
+* **make**
 
-## Compile:
+## Install:
 
 ```console
-cd solutions
-makefile build
+git clone https://github.com/ddyak/comp-phys-2019
+make build -С solutions
 ```
 
-## Execute:
+## Usage:
 
 ```console
 ./task2                             # execute code
 gnuplot convergenceRate.gdi         # compile figure
-xdg-open convergenceRate.pdf        # show pdf using standard utility
+xdg-open convergenceRate.pdf        # show pdf with figure
 ```

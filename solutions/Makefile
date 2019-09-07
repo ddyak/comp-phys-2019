@@ -1,4 +1,6 @@
-all:
+all: build
+
+build:
 	make build -C 1 
 	make build -C 2 
 	make build -C 3
