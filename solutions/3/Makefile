@@ -3,8 +3,8 @@ all: build
 
 build:
 	g++ --std=c++17 task3.cc -o task3
-	./task3
-	gnuplot convergenceRate.gpi
+	./task3 1>/dev/null
+	gnuplot convergenceRate.gp
 
 clean:
 	rm task3 *.csv

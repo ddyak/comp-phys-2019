@@ -5,7 +5,7 @@ all:
 build:
 	g++ task2.cc -o task2
 	./task2 1>/dev/null
-	gnuplot convergenceRate.gpi
+	gnuplot convergenceRate.gp
 
 clean:
 	rm task2 *.csv
