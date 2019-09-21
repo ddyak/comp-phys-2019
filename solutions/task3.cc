@@ -3,8 +3,10 @@
 #include <vector>
 #include <fstream>
 #include <tuple>
-#include <numeric> // std::iota
+#include <numeric> 
 #include <iomanip>
+
+#include "gnuplotwrapper.h"
 
 const auto roots = {1.57079632679, 1.29587400873};
 
@@ -60,6 +62,31 @@ int main() {
         }
         out.close();
     }
+
+    Gnuplot plot;
+    plot("  set datafile separator \",\"                                    \n\
+            set multiplot layout 2, 1 title \"Task3 solution\" font \",14\" \n\
+            set grid\n\
+            set title 'Convergence Rate'\n\
+            set xlabel 'Iteration'\n\
+            set ylabel 'Error'\n\
+            set logscale y\n\
+            plot \
+            'f1.csv' u ($0+1):1 w lp title 'Left Riemann Sum',\
+            'f1.csv' u ($0+1):2 w lp title 'Right Riemann Sum',\
+            'f1.csv' u ($0+1):3 w lp title 'Trapezoidal Rule',\
+            'f1.csv' u ($0+1):4 w lp title 'SimpsonRule'\n\
+            plot \
+            'f2.csv' u ($0+1):1 w lp title 'Left Riemann Sum',\
+            'f2.csv' u ($0+1):2 w lp title 'Right Riemann Sum',\
+            'f2.csv' u ($0+1):3 w lp title 'Trapezoidal Rule',\
+            'f2.csv' u ($0+1):4 w lp title 'SimpsonRule'\n\
+            unset multiplot");
+
+
+    std::cin.get();
+    std::remove("f1.csv");
+    std::remove("f2.csv");
 
     return 0;
 }

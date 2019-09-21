@@ -1,6 +1,0 @@
-[submodule "matplotlib-cpp"]
-	path = matplotlib-cpp
-	url = https://github.com/ddyak/comp-phys-2019
-[submodule "matplotlibcpp"]
-	path = matplotlibcpp
-	url = https://github.com/lava/matplotlib-cpp

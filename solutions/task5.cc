@@ -3,8 +3,12 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <numeric> // std::iota
 
-static const int N = 4;
+#include "utils.h"
+#include "gnuplotwrapper.h"
+
+static int N = 4;
 
 static const double X(int k) { return (1 + static_cast<double>(k) / N); }
 
@@ -41,13 +45,44 @@ double NewtonPolynomial(double x) {
 
 int main() {
     int samples = 1000;
-    double x = 0.95, y = 2.05, delta = (y - x) / samples;
+    double a = 1, b = 2, delta = (b - a) / samples;
     std::ofstream out("interpolations.csv");
     for (int i = 0; i < samples; ++i) {
+        double x = a + delta * i;
         out << std::setprecision(10) << x << ',' << LagrangePolynomial(x) - log(x) <<
                           ',' << NewtonPolynomial(x) - log(x) << std::endl;
-        x += delta;
     }
     out.close();
+
+    std::ofstream out2("integral.csv");
+    std::vector<int> ivec(40);
+    std::iota(ivec.begin(), ivec.end(), 3);
+    for (auto N : ivec) {
+        ::N = N;
+        out2 << std::setprecision(12) << utils::Integrate(1000, a, b, [](double x) {
+            return std::abs(LagrangePolynomial(x) - log(x));
+        }) << std::endl;
+    }
+    out2.close();
+    
+    
+    Gnuplot plot;
+    plot("  set datafile separator \",\"\n\
+            set multiplot layout 2, 1 title \"Task5 solution\" font \",14\"\n\
+            set grid\n\
+            set title 'Newthon Method'\n\
+            set xlabel 'x'\n\
+            set ylabel 'f(x)'\n\
+            plot 'interpolations.csv' u 1:2 w l title 'Lagrange',\
+                'interpolations.csv' u 1:3 w l title 'Newton' \n\
+            set logscale y\n\
+            plot 'integral.csv' u ($0+3):1 w lp title 'Loss Function'\n\
+            unset multiplot");
+
+
+    std::cin.get();
+    std::remove("integral.csv");
+    std::remove("interpolations.csv");
+
     return 0;
 }

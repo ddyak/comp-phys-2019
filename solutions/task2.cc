@@ -4,6 +4,9 @@
 #include <fstream>
 #include <iomanip>
 
+#include "utils.h"
+#include "gnuplotwrapper.h"
+
 /** equation of the form f(e)=0, where e is energy in main state
     for the problem where the particle is in a rectangular
     potential well of size [-a, a] and potential -|U0|. */
@@ -78,5 +81,22 @@ int main()
     dichotomyStream.close();
     fixedPointStream.close();
     newthonStream.close();
+
+    Gnuplot plot;
+    plot("  set grid\n\
+            set title 'Convergence Rate'\n\
+            set xlabel 'Iteration'\n\
+            set ylabel 'Error'\n\
+            set logscale y\n\
+            set xrange [0:21]\n\
+            plot 'dichotomy.csv' u ($0+1):1 w lp title 'Dichotomy',\
+            'fixedPointIteration.csv' u ($0+1):1 w lp title 'Fixed Point Iteration method',\
+            'newthon.csv' u ($0+1):1 w lp title 'Newthon method', 0.0000005 title 'Error threshold'\n");
+
+    std::cin.get();
+    std::remove("dichotomy.csv");
+    std::remove("fixedPointIteration.csv");
+    std::remove("newthon.csv");
+  
     return 0;
 }

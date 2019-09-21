@@ -58,3 +58,6 @@ int main () {
     }
     return 0;
 }
+
+// Runge kut 2, 4;
+// 
