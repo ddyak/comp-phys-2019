@@ -27,7 +27,7 @@ double det(double h) {
 double u_n1_s1(double h, double u_n, double v_n, double u_n1_s = -1, double v_n1_s = -1) {
     u_n1_s = u_n;
     v_n1_s = v_n;
-    return u_n1_s + 1 / det(h) * ( (1 - h*g_v()) * (u_n - u_n1_s + h*f(u_n1_s, v_n1_s)) 
+    return u_n1_s + 1 / det(h) * ((1 - h*g_v()) * (u_n - u_n1_s + h*f(u_n1_s, v_n1_s)) 
                                 +  (h * f_v()) * (v_n - v_n1_s + h*g(u_n1_s, v_n1_s)));  
 }
 
@@ -45,7 +45,7 @@ double v_n1_s1(double h, double u_n, double v_n, double u_n1_s = -1, double v_n1
  */
 
 int main() {
-    double h = 1e-4; // h < 1/1000
+    double h = 1e-5; // h < 1e-3
     double t = 0, u = 1, v = 1;
     std::vector<std::vector<double>> data;
     data.push_back({t, u, v}); 
@@ -64,5 +64,3 @@ int main() {
 
 // Что такое жесткие уравнения? complete
 // Что такое неявное жесткое уравнение, схема, границы применимости? complete
-// Вычестить с явной разницой (график) complete
-// Двумерный график: И что я имел в виду?

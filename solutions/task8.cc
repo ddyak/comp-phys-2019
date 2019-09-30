@@ -4,7 +4,7 @@
 #include <vector>
 #include <functional>
 
-static const int a = 10, b = 2, c = 2, d = 10;
+static const int a = -10, b = 2, c = 2, d = 10;
 static const double f1(double x, double y) { return a * x - b*x*y; };
 static const double f2(double x, double y) { return c*x*y - d * y; };
 
@@ -30,7 +30,7 @@ RungeKuttaMethods(int N, double alpha, std::pair<double, double> InitPoint, std:
 static const auto time_interval= std::make_pair(0., 50.);
 static const double predator = 6, prey = 6;
 static const double alpha = 0.75;
-static const int N = 1000;
+static const int N = 10000;
 
 int main() {
     const auto solution = RungeKuttaMethods(N, alpha, {predator, prey}, time_interval);
