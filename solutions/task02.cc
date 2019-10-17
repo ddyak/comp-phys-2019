@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iomanip>
 
-#include "utils.h"
 #include "gnuplotwrapper.h"
 
 /** equation of the form f(e)=0, where e is energy in main state

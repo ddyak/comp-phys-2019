@@ -47,24 +47,26 @@ def InverseIterations(psi0, x, N, iteration, levels):
     
         E0 = np.linalg.norm(psi_prev) / np.linalg.norm(psi_next)
         E.append(E0)
-
         psi_next /= np.linalg.norm(psi_next)        
         psi.append(psi_next)
     
     return E, psi
     
 def main():
-    N = 1000 # разбиение
-    iteration = 25 # numbers of iteration А operator
+    N = 1000 # partion
+    iteration = 50 # А**(iteration)
     x1 = -10
     x2 = 10 
-    levels = 4
+    levels = 3
     x = np.linspace(x1, x2, N)
     y0 = np.linspace(1, 2, N) # pseudo solution
     E, psi = InverseIterations(y0, x, N, iteration, levels)
 
     for i in range(0, levels):
-        print (E[i])
+        print(str.format('E{}: {}', i, E[i]))
+        plt.plot(x, psi[i], label = 'psi' + str(i))
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
     main()
