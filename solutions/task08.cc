@@ -4,7 +4,7 @@
 #include <vector>
 #include <functional>
 
-static const int a = -10, b = 2, c = 2, d = 10;
+static const int a = 10, b = 2, c = 2, d = 10;
 static const double f1(double x, double y) { return a * x - b*x*y; };
 static const double f2(double x, double y) { return c*x*y - d * y; };
 
