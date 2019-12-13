@@ -3,6 +3,7 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <functional>
 
 #include "../gnuplotwrapper.h"
 
@@ -15,16 +16,24 @@
 // f(x,y) = (1-x^2) + 100 * (x - y^2)^2
 // Has global min in (x, y) = (1,1), where f(x,y) = 0
 
-double f(const std::vector<double>& args) { // notation for args as in PyROOT
+double Rosenbrock(const std::vector<double>& args) {
     return pow(1 - args[0], 2) + 100 * pow(args[1] - pow(args[0], 2), 2);
+}
+
+double Sphere(const std::vector<double>& args) {
+    return pow(args[0], 2) + pow(args[1], 2);
+}
+
+double McCormick(const std::vector<double>& args) {
+    return sin(args[0] + args[1]) + pow((args[0] - args[1]), 2) - 1.5 * args[0] + 2.5 * args[1] + 1;
 }
 
 const double lr = 0.0021;   // learning rate
 const double mr = 0.9;      // memory rate
 const double delta = 1e-8; 
-const int MAX_ITERATION = 300;
+int MAX_ITERATION = 300;
 
-std::vector<double> gradient(double (*f)(const std::vector<double>&), 
+std::vector<double> gradient(std::function<double(const std::vector<double>&)> f, 
                              const std::vector<double>& point) {
     std::vector<double> grad;
     for (int i = 0; i < point.size(); ++i) {
@@ -35,7 +44,7 @@ std::vector<double> gradient(double (*f)(const std::vector<double>&),
     return grad;
 }
 
-std::vector<std::vector<double>> GD(double (*f)(const std::vector<double>&),
+std::vector<std::vector<double>> GD(std::function<double(const std::vector<double>&)> f,
                                      const std::vector<double>& initPoint) {
     std::vector<std::vector<double>> trace = { initPoint };
     std::vector<double> current = initPoint;
@@ -49,7 +58,7 @@ std::vector<std::vector<double>> GD(double (*f)(const std::vector<double>&),
     return trace;
 }
 
-std::vector<std::vector<double>> Nesterov_Momentum(double (*f)(const std::vector<double>&),
+std::vector<std::vector<double>> Nesterov_Momentum(std::function<double(const std::vector<double>&)> f,
                                       const std::vector<double>& initPoint) {
     std::vector<std::vector<double>> trace = { initPoint };
     std::vector<double> current = initPoint;
@@ -68,32 +77,39 @@ std::vector<std::vector<double>> Nesterov_Momentum(double (*f)(const std::vector
     return trace;
 }
 
+void saveSolution(const std::vector<std::vector<double>>& solution, const std::string& filename) {
+    std::ofstream file(filename);
+    for (const auto& sample : solution) {
+        for (size_t i = 0; i < sample.size(); ++i) {
+            file << sample[i] << ((i + 1 != sample.size()) ? "," : "");
+        }
+        file << std::endl;
+    }
+    file.close();
+}
+
+struct Sample {
+    std::string name;
+    std::function<double(const std::vector<double>&)> foo;
+    std::vector<double> initPoint;
+};
+    
 int main() {
     std::vector<double> initPoint = {1.1, 0.9};
-    const auto solutionGD = GD(f, initPoint);
-    const auto solutionNM = Nesterov_Momentum(f, initPoint);
     
-    Gnuplot plot;
-    plot("set multiplot title \"GD vs NM on Reonbrock Function\" font \",14\"");
-    plot("set size 0.6, 1");
-    plot("set origin 0.0, 0.0");
-    std::ifstream in("isolines.plot");
-    std::string str((std::istreambuf_iterator<char>(in)),
-                 std::istreambuf_iterator<char>());
-    plot(str);
-    
-    plot("set size 0.4, 0.5");
-    plot("set origin 0.6, 0.0");
-    plot("set title 'GD'");
-    plot("plot '-' using 1:2 title 'GD'");
-    plot.catData(solutionGD);
+    std::vector<Sample> functions = {{"Sphere", Sphere, {1.1, 0.9}},
+                                     {"Rosenbrock", Rosenbrock, {1.1, 0.9}},
+                                     {"McCormick", McCormick, {1.1, 0.9}}
+                                     };
 
-    plot("set title 'NM'");
-    plot("set size 0.4, 0.5");
-    plot("set origin 0.6, 0.5");
-    plot("plot '-' using 1:2 title 'NM'");
-    plot.catData(solutionNM);
+    MAX_ITERATION = 10000;
 
-    plot("unset multiplot");
+    for (auto& [name, foo, initPoint] : functions) {
+        const auto solutionGD = GD(foo, initPoint);
+        const auto solutionNM = Nesterov_Momentum(foo, initPoint);
+        saveSolution(solutionNM, name + "_NM.csv");
+        saveSolution(solutionGD, name + "_GD.csv");
+    }
+  
     return 0;
 }
